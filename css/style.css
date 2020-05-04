@@ -1,0 +1,7 @@
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background-color: #f8f9fa;
+}
+.container-fluid {
+  max-width: 1400px;
+}
