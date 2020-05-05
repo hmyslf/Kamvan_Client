@@ -1,0 +1,84 @@
+{
+  "User": [
+    {
+      "id": 1,
+      "first_name": "Angelina",
+      "last_name": "Christpy",
+      "email": "christpy@mail.com",
+      "password": "christpy"
+    },
+    {
+      "id": 2,
+      "first_name": "Gabriela",
+      "last_name": "Angelina",
+      "email": "gabriel@mail.com",
+      "password": "biyel"
+    },
+    {
+      "id": 3,
+      "first_name": "Martino",
+      "last_name": "Sitanggang",
+      "email": "marino@mail.com",
+      "password": "marino"
+    },
+    {
+      "id": 4,
+      "first_name": "Dhea",
+      "last_name": "Angelia",
+      "email": "angelia@mail.com",
+      "password": "angelia"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Mengerjakan Kamvan",
+      "points": 1000,
+      "category": "backlog",
+      "assigned_to": "Yosa"
+    },
+    {
+      "id": 2,
+      "title": "Mengerjakan FancyTodo",
+      "points": 20,
+      "category": "todo",
+      "assigned_to": "Chrispy"
+    },
+    {
+      "id": 3,
+      "title": "Mengerjakan Teman",
+      "points": 100,
+      "category": "doing",
+      "assigned_to": "Orang"
+    },
+    {
+      "id": 4,
+      "title": "Mengerjakan Kerjaan",
+      "points": 50,
+      "category": "done",
+      "assigned_to": "Siapa"
+    }
+  ],
+  "Category": [
+    {
+      "title": "Back-Log",
+      "slug": "backlog",
+      "color": "bg-danger"
+    },
+    {
+      "title": "To-Do",
+      "slug": "todo",
+      "color": "bg-warning"
+    },
+    {
+      "title": "Doing",
+      "slug": "doing",
+      "color": "bg-primary"
+    },
+    {
+      "title": "Done",
+      "slug": "done",
+      "color": "bg-success"
+    }
+  ]
+}
