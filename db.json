@@ -57,6 +57,20 @@
       "points": 50,
       "category": "done",
       "assigned_to": "Siapa"
+    },
+    {
+      "id": 5,
+      "title": "Mobile Legends",
+      "points": 50,
+      "category": "done",
+      "assigned_to": "Siapa"
+    },
+    {
+      "id": 6,
+      "title": "Task",
+      "category": "backlog",
+      "description": "adding new todos",
+      "assigned_to": "Siapa aja dah"
     }
   ],
   "Category": [
