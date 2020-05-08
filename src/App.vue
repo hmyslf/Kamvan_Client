@@ -7,24 +7,51 @@
       :logged_in="logged_in"
     ></Navbar>
     <div id="loginForm" v-if="!logged_in && page == 'login'">
-      <LoginForm :errorMessage="errorMessage" @login="login"></LoginForm>
+      <LoginForm
+        :successMessage="successMessage"
+        :errorMessage="errorMessage"
+        @login="login"
+        @onSignIn="onSignIn"
+      ></LoginForm>
     </div>
     <div id="registerForm" v-if="!logged_in && page == 'register'">
-      <RegisterForm></RegisterForm>
+      <RegisterForm
+        @register="register"
+        :errorMessage="errorMessage"
+      ></RegisterForm>
     </div>
     <div id="dashboardPage" v-if="logged_in">
       <div class="row">
         <CategoryList
-          v-for="(card, index) in categories"
+          v-for="(category, index) in categories"
           @detailTask="detailTask"
+          @updateTask="updateTask"
           :key="index"
-          :tasks="tasks"
-          :card="card"
+          :category="category"
+          :backgrounds="backgrounds"
+          :index="index"
         ></CategoryList>
       </div>
     </div>
     <NewTaskForm @addnewTask="addNewTask"></NewTaskForm>
-    <DetailTask :task="task"></DetailTask>
+    <DetailTask
+      :task="task"
+      :categories="categories"
+      :errorMessage="errorMessage"
+      @confirmDelete="confirmDelete"
+      @updateTask="updateTask"
+      @showEdit="showEdit"
+    ></DetailTask>
+    <EditTask
+      :task="task"
+      @updateTask="updateTask"
+      :errorMessage="errorMessage"
+    ></EditTask>
+    <DeleteTask
+      :task="task"
+      @deleteTask="deleteTask"
+      :errorMessage="errorMessage"
+    ></DeleteTask>
   </div>
 </template>
 
@@ -35,6 +62,8 @@ import RegisterForm from './components/RegisterForm.vue';
 import Navbar from './components/Navbar.vue';
 import NewTaskForm from './components/NewTaskForm.vue';
 import DetailTask from './components/DetailTask.vue';
+import EditTask from './components/EditTask.vue';
+import DeleteTask from './components/DeleteTask.vue';
 import axios from 'axios';
 
 export default {
@@ -45,17 +74,22 @@ export default {
     RegisterForm,
     Navbar,
     NewTaskForm,
-    DetailTask
+    DetailTask,
+    EditTask,
+    DeleteTask
   },
   data() {
     return {
-      tasks: [],
+      // tasks: [],
       task: {},
       categories: [],
+      backgrounds: ['bg-danger', 'bg-warning', 'bg-primary', 'bg-success'],
       logged_in: false,
       errorMessage: '',
+      successMessage: '',
       page: 'login',
-      token: 'BskddlsacBJWEOJklbSDLKWJCLNkscnofknlZNVLDFEORFRJ'
+      token: localStorage.getItem('token'),
+      baseUrl: `http://secret-mountain-19602.herokuapp.com`
     };
   },
   methods: {
@@ -63,87 +97,178 @@ export default {
       this.task = task;
       $('#detailModal').modal('show');
     },
-    fetchTask() {
+    showEdit(task) {
+      this.task = task;
+      $('#detailModal').modal('hide');
+      $('#editModal').modal('show');
+    },
+    confirmDelete(task) {
+      $('#detailModal').modal('hide');
+      $('#deleteModal').modal('show');
+    },
+    updateTask(task) {
+      console.log(task);
       axios
-        .get('http://localhost:3000/tasks')
-        .then(response => {
-          this.tasks = response.data;
+        .put(`${this.baseUrl}/tasks/${task.id}`, task, {
+          headers: {
+            token: this.token
+          }
         })
-        .catch(error => {
-          this.errMessage = err.message;
+        .then(response => {
+          console.log(response.data);
+          $('#detailModal').modal('hide');
+          $('#editModal').modal('hide');
+          this.fetchCategory();
+        })
+        .catch(err => {
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 3000);
+          this.errorMessage = err.response.data.error.msg;
         });
     },
     fetchCategory() {
       axios
-        .get('http://localhost:3000/category')
+        .get(`${this.baseUrl}/category`)
         .then(response => {
-          this.categories = response.data;
-        })
-        .catch(err => {
-          this.errMessage = err.message;
-        });
-    },
-    login(userData) {
-      axios
-        .get('http://localhost:3000/user')
-        .then(response => {
-          console.log(response.data);
-          console.log(userData);
-          const user = response.data.filter(el => {
-            return (
-              el.email == userData.email && el.password == userData.password
-            );
-          });
-          console.log(user);
-          if (user.length) {
-            this.logged_in = true;
-            this.page = '';
-            localStorage.setItem('token', this.token);
-            this.fetchCategory();
-            this.fetchTask();
-            this.errorMessage = '';
-          } else {
-            this.errorMessage = 'Email/Password did not match';
-          }
-        })
-        .catch(err => {
-          this.errMessage = err.message;
-        });
-    },
-    addNewTask(taskData) {
-      axios
-        .post('http://localhost:3000/tasks', {
-          id: 6,
-          title: taskData.title,
-          category: 'backlog',
-          description: taskData.description,
-          assigned_to: taskData.assigned_to
-        })
-        .then(res => {
-          $('#newTaskModal').modal('hide');
-          this.tasks.push(res.data);
+          this.categories = response.data.Categories;
         })
         .catch(err => {
           this.errorMessage = err.message;
         });
     },
+    register(userData) {
+      axios
+        .post(`${this.baseUrl}/register`, userData)
+        .then(response => {
+          this.page = 'login';
+          this.successMessage = `Register Success, Please Login!`;
+          setTimeout(() => {
+            this.successMessage = '';
+          }, 3000);
+          this.errorMessage = '';
+        })
+        .catch(err => {
+          let errors = err.response.data.errors || err.response.data.error;
+          if (Array.isArray(errors)) {
+            for (let i = 0; i < errors.length; i++) {
+              this.errorMessage += `${errors[i].msg},`;
+            }
+          } else {
+            this.errorMessage = errors;
+          }
+        });
+    },
+    login(userData) {
+      axios
+        .post(`${this.baseUrl}/login`, userData)
+        .then(response => {
+          this.logged_in = true;
+          this.page = '';
+          localStorage.setItem('token', response.data.token);
+          this.errorMessage = '';
+        })
+        .catch(err => {
+          this.errorMessage = err.response.data.error.message;
+        });
+    },
+    onSignIn(googleUser) {
+      console.log('disini');
+      const id_token = googleUser.getAuthResponse().id_token;
+      const profile = googleUser.getBasicProfile();
+      axios
+        .post(
+          `${this.baseUrl}/google-login`,
+          {},
+          {
+            headers: {
+              google_token: id_token,
+              first_name: profile.pW,
+              last_name: profile.qU
+            }
+          }
+        )
+        .then(response => {
+          this.logged_in = true;
+          this.page = '';
+          localStorage.setItem('token', response.data.token);
+          this.errorMessage = '';
+        })
+        .catch(err => {
+          console.log(err.response);
+          this.errorMessage = err.response.data.errors.message;
+        });
+    },
+    addNewTask(taskData) {
+      axios
+        .post(
+          `${this.baseUrl}/tasks`,
+          {
+            title: taskData.title,
+            category: 'backlog',
+            points: taskData.points,
+            description: taskData.description,
+            assigned_to: taskData.assigned_to
+          },
+          {
+            headers: {
+              token: this.token
+            }
+          }
+        )
+        .then(res => {
+          $('#newTaskModal').modal('hide');
+          this.fetchCategory();
+        })
+        .catch(err => {
+          this.errorMessage = err.message;
+        });
+    },
+    deleteTask(id) {
+      axios
+        .delete(`${this.baseUrl}/tasks/${id}`, {
+          headers: {
+            token: this.token
+          }
+        })
+        .then(res => {
+          $('#detailModal').modal('hide');
+          $('#deleteModal').modal('hide');
+          this.fetchCategory();
+        })
+        .catch(err => {
+          console.log(err.response);
+          this.errorMessage = err.response.data.error.msg;
+        });
+    },
     showLoginPage() {
       this.page = 'login';
+      this.errorMessage = '';
     },
     showRegisterPage() {
       this.page = 'register';
+      this.errorMessage = '';
     },
     logout() {
-      localStorage.clear();
-      this.logged_in = false;
+      let auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(() => {
+        localStorage.clear();
+        this.logged_in = false;
+        this.page = 'login';
+        this.errorMessage = '';
+      });
     }
   },
   created() {
     if (localStorage.token) {
       this.logged_in = true;
     }
-    this.fetchTask();
     this.fetchCategory();
+  },
+  mounted() {
+    gapi.load('auth2', function() {
+      gapi.auth2.init();
+    });
   }
 };
 </script>

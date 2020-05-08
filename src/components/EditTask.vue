@@ -1,10 +1,10 @@
 <template>
-  <!-- MODAL Detail -->
-  <div class="modal" tabindex="-1" role="dialog" id="detailModal">
+  <!-- MODAL Edit -->
+  <div class="modal" tabindex="-1" role="dialog" id="editModal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Detail Task for: {{ task.title }}</h5>
+          <h5 class="modal-title">Edit Task: {{ task.title }}</h5>
           <button
             type="button"
             class="close"
@@ -18,39 +18,53 @@
           <div class="text-danger" id="errorMessage" v-if="errorMessage">
             <span>{{ errorMessage }}</span>
           </div>
-          <form>
+          <form @submit.prevent="updateTask">
             <div class="form-group">
               <label for="title">Title</label>
-              <p>{{ task.title }}</p>
+              <input
+                type="text"
+                class="form-control"
+                id="title"
+                aria-describedby="emailHelp"
+                placeholder="First Name"
+                v-model="localTask.title"
+              />
             </div>
             <div class="form-group">
               <label for="description">Description</label>
-              <p>{{ task.description }}</p>
+              <input
+                type="textarea"
+                class="form-control"
+                id="description"
+                aria-describedby="emailHelp"
+                placeholder="Description"
+                v-model="localTask.description"
+              />
             </div>
             <div class="form-group">
               <label for="points">Points</label>
-              <p>{{ task.points }}</p>
+              <input
+                type="number"
+                class="form-control"
+                id="points"
+                aria-describedby="emailHelp"
+                placeholder="Points"
+                v-model="localTask.points"
+              />
             </div>
             <div class="form-group">
               <label for="assigned_to">Assigned To</label>
-              <p>{{ task.assigned_to }}</p>
+              <input
+                type="text"
+                class="form-control"
+                id="assigned_to"
+                aria-describedby="emailHelp"
+                placeholder="Assigned To"
+                v-model="localTask.assigned_to"
+              />
             </div>
-            <div class="modal-footer d-flex justify-content-between">
-              <div v-for="category in categories" :key="category.id">
-                <button
-                  class="btn btn-primary"
-                  @click.prevent="updateTask(category.id)"
-                  v-if="category.id != task.CategoryId"
-                >
-                  {{ category.name }}
-                </button>
-              </div>
-              <button class="btn btn-warning" @click.prevent="showEdit(task)">
-                Edit
-              </button>
-              <button class="btn btn-danger" @click.prevent="confirmDelete()">
-                Delete
-              </button>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Save</button>
               <button
                 type="button"
                 class="btn btn-secondary"
@@ -68,33 +82,22 @@
 
 <script>
 export default {
-  name: 'DetailTask',
+  name: 'EditTask',
+  props: ['task', 'errorMessage'],
   data() {
     return {};
   },
-  props: ['task', 'categories', 'errorMessage'],
   methods: {
-    confirmDelete() {
-      let task = {
-        id: this.localTask.id,
-        title: this.localTask.title
-      };
-      this.$emit('confirmDelete', task);
-    },
-    updateTask(categoryId) {
-      console.log(categoryId);
-      let task = {
+    updateTask() {
+      let taskData = {
         id: this.localTask.id,
         title: this.localTask.title,
         description: this.localTask.description,
         points: this.localTask.points,
         assigned_to: this.localTask.assigned_to,
-        categoryId
+        CategoryId: this.localTask.CategoryId
       };
-      this.$emit('updateTask', task);
-    },
-    showEdit(task) {
-      this.$emit('showEdit', task);
+      this.$emit('updateTask', taskData);
     }
   },
   computed: {

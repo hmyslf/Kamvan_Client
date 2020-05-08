@@ -5,12 +5,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">New Task</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -61,14 +56,8 @@
               />
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Save</button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
+              <button type="submit" class="btn btn-primary">Add Task</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
           </form>
         </div>
@@ -79,14 +68,14 @@
 
 <script>
 export default {
-  name: 'NewTaskForm',
+  name: "NewTaskForm",
   data() {
     return {
-      title: '',
-      description: '',
-      points: '',
-      assigned_to: ''
-    }
+      title: "",
+      description: "",
+      points: "",
+      assigned_to: ""
+    };
   },
   methods: {
     addNewTask() {
@@ -95,11 +84,11 @@ export default {
         description: this.description,
         points: this.points,
         assigned_to: this.assigned_to
-      }
-      this.$emit('addnewTask', taskData)
+      };
+      this.$emit("addnewTask", taskData);
     }
   }
-}
+};
 </script>
 
 <style></style>

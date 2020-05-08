@@ -8,21 +8,16 @@
       <p class="card-text">Assigned To: {{ task.assigned_to }}</p>
       <a class="btn btn-primary text-white" @click="detailTask">Show Detail</a>
     </div>
-    <!-- <DetailTask :task="task"></DetailTask> -->
   </div>
 </template>
 
 <script>
-// import DetailTask from './DetailTask.vue';
-
 export default {
-  // components: {
-  //   DetailTask
-  // },
   name: 'TaskCard',
-  props: ['task', 'card'],
+  props: ['task'],
   methods: {
     detailTask() {
+      console.log(this.task);
       this.$emit('detailTask', this.task);
     }
   }
