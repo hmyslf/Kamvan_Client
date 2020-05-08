@@ -19,6 +19,7 @@
   "homepage": "https://github.com/hmyslf/Kamvan_Client#readme",
   "dependencies": {
     "axios": "^0.19.2",
+    "socket.io-client": "^2.3.0",
     "vue": "^2.6.11",
     "vue-draggable": "^2.0.6",
     "vue-google-login": "^2.0.3",

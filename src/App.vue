@@ -65,6 +65,7 @@ import NewTaskForm from './components/NewTaskForm.vue';
 import DetailTask from './components/DetailTask.vue';
 import EditTask from './components/EditTask.vue';
 import DeleteTask from './components/DeleteTask.vue';
+import io from 'socket.io-client';
 import axios from 'axios';
 
 export default {
@@ -91,7 +92,8 @@ export default {
       page: 'login',
       token: localStorage.getItem('token'),
       userId: localStorage.getItem('UserId'),
-      baseUrl: `https://secret-mountain-19602.herokuapp.com`
+      baseUrl: `https://secret-mountain-19602.herokuapp.com`,
+      socket: null
     };
   },
   methods: {
@@ -121,6 +123,7 @@ export default {
           $('#detailModal').modal('hide');
           $('#editModal').modal('hide');
           this.fetchCategory();
+          this.socket.emit('incoming category', this.categories);
         })
         .catch(err => {
           setTimeout(() => {
@@ -223,6 +226,7 @@ export default {
         .then(res => {
           $('#newTaskModal').modal('hide');
           this.fetchCategory();
+          this.socket.emit('incoming category', this.categories);
         })
         .catch(err => {
           this.errorMessage = err.message;
@@ -239,6 +243,7 @@ export default {
           $('#detailModal').modal('hide');
           $('#deleteModal').modal('hide');
           this.fetchCategory();
+          this.socket.emit('incoming category', this.categories);
         })
         .catch(err => {
           console.log(err.response);
@@ -268,6 +273,11 @@ export default {
       this.logged_in = true;
     }
     this.fetchCategory();
+    this.socket = io(this.baseUrl);
+    this.socket.connect();
+    this.socket.on('outgoing category', data => {
+      this.categories = data.num;
+    });
   },
   mounted() {
     gapi.load('auth2', function() {
