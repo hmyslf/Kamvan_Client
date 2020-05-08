@@ -18,7 +18,7 @@
                 class="form-control"
                 id="title"
                 aria-describedby="emailHelp"
-                placeholder="First Name"
+                placeholder="Title"
                 v-model="title"
               />
             </div>
