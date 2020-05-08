@@ -5,12 +5,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Detail Task for: {{ task.title }}</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -36,28 +31,18 @@
               <p>{{ task.assigned_to }}</p>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-              <div v-for="category in categories" :key="category.id">
-                <button
-                  class="btn btn-primary"
-                  @click.prevent="updateTask(category.id)"
-                  v-if="category.id != task.CategoryId"
-                >
-                  {{ category.name }}
-                </button>
+              <div v-if="task.UserId == userId" class="d-flex justify-content-between w-100">
+                <div v-for="category in categories" :key="category.id">
+                  <button
+                    class="btn btn-primary"
+                    @click.prevent="updateTask(category.id)"
+                    v-if="category.id == task.CategoryId - 1 || category.id == task.CategoryId + 1"
+                  >{{ category.name }}</button>
+                </div>
+                <button class="btn btn-warning" @click.prevent="showEdit(task)">Edit</button>
+                <button class="btn btn-danger" @click.prevent="confirmDelete()">Delete</button>
               </div>
-              <button class="btn btn-warning" @click.prevent="showEdit(task)">
-                Edit
-              </button>
-              <button class="btn btn-danger" @click.prevent="confirmDelete()">
-                Delete
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
           </form>
         </div>
@@ -68,18 +53,18 @@
 
 <script>
 export default {
-  name: 'DetailTask',
+  name: "DetailTask",
   data() {
     return {};
   },
-  props: ['task', 'categories', 'errorMessage'],
+  props: ["task", "categories", "errorMessage", "userId"],
   methods: {
     confirmDelete() {
       let task = {
         id: this.localTask.id,
         title: this.localTask.title
       };
-      this.$emit('confirmDelete', task);
+      this.$emit("confirmDelete", task);
     },
     updateTask(categoryId) {
       console.log(categoryId);
@@ -91,10 +76,10 @@ export default {
         assigned_to: this.localTask.assigned_to,
         categoryId
       };
-      this.$emit('updateTask', task);
+      this.$emit("updateTask", task);
     },
     showEdit(task) {
-      this.$emit('showEdit', task);
+      this.$emit("showEdit", task);
     }
   },
   computed: {

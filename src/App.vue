@@ -38,6 +38,7 @@
       :task="task"
       :categories="categories"
       :errorMessage="errorMessage"
+      :userId="userId"
       @confirmDelete="confirmDelete"
       @updateTask="updateTask"
       @showEdit="showEdit"
@@ -89,7 +90,8 @@ export default {
       successMessage: '',
       page: 'login',
       token: localStorage.getItem('token'),
-      baseUrl: `http://secret-mountain-19602.herokuapp.com`
+      userId: localStorage.getItem('UserId'),
+      baseUrl: `https://secret-mountain-19602.herokuapp.com`
     };
   },
   methods: {
@@ -166,6 +168,7 @@ export default {
           this.logged_in = true;
           this.page = '';
           localStorage.setItem('token', response.data.token);
+          localStorage.setItem('UserId', response.data.UserId);
           this.errorMessage = '';
         })
         .catch(err => {
@@ -192,6 +195,7 @@ export default {
           this.logged_in = true;
           this.page = '';
           localStorage.setItem('token', response.data.token);
+          localStorage.setItem('UserId', response.data.UserId);
           this.errorMessage = '';
         })
         .catch(err => {
