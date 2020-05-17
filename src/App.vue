@@ -90,8 +90,8 @@ export default {
       errorMessage: '',
       successMessage: '',
       page: 'login',
-      token: localStorage.getItem('token'),
-      userId: localStorage.getItem('UserId'),
+      token: localStorage.token,
+      userId: localStorage.UserId,
       baseUrl: `https://secret-mountain-19602.herokuapp.com`,
       socket: null
     };
@@ -170,8 +170,11 @@ export default {
         .then(response => {
           this.logged_in = true;
           this.page = '';
+          console.log(response.data)
           localStorage.setItem('token', response.data.token);
+          this.token = response.data.token;
           localStorage.setItem('UserId', response.data.UserId);
+          this.UserId = response.data.UserId;
           this.errorMessage = '';
         })
         .catch(err => {
@@ -179,7 +182,6 @@ export default {
         });
     },
     onSignIn(googleUser) {
-      console.log('disini');
       const id_token = googleUser.getAuthResponse().id_token;
       const profile = googleUser.getBasicProfile();
       axios
@@ -207,6 +209,7 @@ export default {
         });
     },
     addNewTask(taskData) {
+      console.log(this.token)
       axios
         .post(
           `${this.baseUrl}/tasks`,
