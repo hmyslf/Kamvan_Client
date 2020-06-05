@@ -111,7 +111,6 @@ export default {
       $('#deleteModal').modal('show');
     },
     updateTask(task) {
-      console.log(task);
       axios
         .put(`${this.baseUrl}/tasks/${task.id}`, task, {
           headers: {

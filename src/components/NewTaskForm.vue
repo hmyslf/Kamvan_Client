@@ -86,6 +86,13 @@ export default {
         assigned_to: this.assigned_to
       };
       this.$emit("addnewTask", taskData);
+      setTimeout(() => {
+        this.title = '';
+        this.description = '';
+        this.points = '';
+        this.assigned_to = '';
+      }, 3000)
+      
     }
   }
 };
